@@ -4,9 +4,30 @@ const Fuzzy=require('../models/fuzzy');
 
 //GET requests
 router.get('/fuzzies',function(req,res,next){
-    res.send({type:'GET'});
+    //res.send({type:'GET'});
+    // Fuzzy.find({}).then(function(fuzzy){
+    //     res.send(fuzzy)
+    // })
 
+    Fuzzy.aggregate().near({
+        near:{
+                'type':'Point',
+                'coordinates':[parseFloat(req.query.lng),parseFloat(req.query.lat)]
+             },
+        maxDistance:100000, 
+        spherical:true,
+        distanceField: "dis"
+        // ).then(function(fuzzy){
+                
+        //         res.send(fuzzy);
+        
+        // });
+
+}).then(function(fuzzy){
+    res.send(fuzzy);
 });
+
+})
 
 //POST requests
 router.post('/fuzzies',function(req,res,next){
@@ -17,7 +38,7 @@ router.post('/fuzzies',function(req,res,next){
     // var fuzzy=new Fuzzy(req.body);
     // fuzzy.save();
    
-})
+});
 
 //PUT requests
 router.put('/fuzzies/:id',function(req,res,next){
@@ -38,7 +59,7 @@ router.delete('/fuzzies/:id',function(req,res,next){
         res.send(fuzzy);
     });
     //res.send({type:'DELETE'});
-})
-
+});
 
 module.exports=router;
+

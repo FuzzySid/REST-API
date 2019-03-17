@@ -3,12 +3,15 @@ const routes=require('./routes/api');
 const bodyParser=require('body-parser');
 const mongoose=require('mongoose');
 
+
 //Connecting to mongodb
 mongoose.connect('mongodb://localhost/fuzzydb');
 mongoose.Promise=global.Promise;
 
 //Setting up app
 const app=express();
+
+app.use(express.static('public'));
 
 app.use(bodyParser.json());
 

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Fuzzy Go!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="styles.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Raleway">
+    <!-- <script src="main.js"></script> -->
+</head>
+<body>
+    <h1 class="title">Find Fuzzy! </h1>
+    <div id="homepage">
+        <h2>Find nearby fuzzy</h2>
+        <div id="fuzzies"></div>
+    </div>
+
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<script src="https://unpkg.com/react@15/dist/react.js"></script>
+<script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
+
+<!--React component-->
+    <script type="text/babel">
+        var Fuzzies=React.createClass({
+            getInitialState:function(){
+                return({
+                   fuzzies:[] 
+                });
+            },
+            render:function () {
+                var fuzzies=this.state.fuzzies;
+                fuzzies=fuzzies.map(function(fuzzy,index){
+                    return(
+                        <li key={index}>
+                            <span className={fuzzy.available}> </span>
+                            <span className="name">{fuzzy.name} </span>
+                            <span className="rank">{fuzzy.rank} </span>
+                            <span className="dist">{Math.floor(fuzzy.dis/1000)}km </span>
+                        </li>
+                    );
+                });
+                return(
+                    <div id="container">
+                <form id="search" onSubmit={this.handleSubmit}>
+                    <label>Enter your latitude </label>
+                    <input type="text" ref="lat" placeholder="latitude" required />
+                    <input type="text" ref="lng" placeholder="longitude" required />
+                    <input type="submit" value="Find Fuzzies" />
+                </form>
+                    <ul>
+                        {fuzzies}
+                    </ul>
+                   
+                    </div>
+                );
+                
+            },
+            handleSubmit:function(e){
+                e.preventDefault();
+                var lng=this.refs.lng.value;
+                var lat=this.refs.lat.value;
+                fetch('/api/fuzzies?lng='+lng+'&lat='+lat).then(function(data){
+                    return data.json();
+                }).then(json=>{
+                    this.setState({
+                        fuzzies:json
+                    });
+                    console.log(json);
+                });
+            }
+        });
+
+
+    ReactDOM.render(<Fuzzies/>,document.getElementById('fuzzies'));
+    </script>
+</body>
+</html>
